@@ -1,5 +1,16 @@
 import React from 'react'
 import './profile.css'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faCode} from "@fortawesome/free-solid-svg-icons";
+import {faUser} from "@fortawesome/free-solid-svg-icons";
+import {faLocationArrow} from "@fortawesome/free-solid-svg-icons";
+import {faCodeBranch} from "@fortawesome/free-solid-svg-icons";
+import {faStar} from "@fortawesome/free-solid-svg-icons";
+import {faLink} from "@fortawesome/free-solid-svg-icons";
+
+
+
+
 
 
 const Profil = ({ user,github }) => (
@@ -16,7 +27,7 @@ const Profil = ({ user,github }) => (
 
                         <div className="media-body mb-5 text-white">
                             <h4 className="mt-0 mb-0">{user.name}</h4>
-                            <p className="small mb-4"><i className="fas fa-map-marker-alt mr-2"></i>{user.location}</p>
+                            <p className="small mb-4"><FontAwesomeIcon icon={faLocationArrow} />   {user.location}</p>
                         </div>
                     </div>
                 </div>
@@ -28,11 +39,12 @@ const Profil = ({ user,github }) => (
                         </li>
                         <li className="list-inline-item">
                             <h5 className="font-weight-bold mb-0 d-block">{user.followers}</h5><small className="text-muted"> <i
-                            className="fas fa-user mr-1"></i>Followers</small>
+                            className="fas fa-user mr-1"><FontAwesomeIcon icon={faUser} />
+                        </i>Followers</small>
                         </li>
                         <li className="list-inline-item">
-                            <h5 className="font-weight-bold mb-0 d-block">{user.following}</h5><small className="text-muted"> <i
-                            className="fas fa-user mr-1"></i>Following</small>
+                            <h5 className="font-weight-bold mb-0 d-block">{user.following}</h5><small className="text-muted">
+                            <FontAwesomeIcon icon={faUser} /> Following</small>
                         </li>
                     </ul>
                 </div>
@@ -40,7 +52,7 @@ const Profil = ({ user,github }) => (
                     <h5 className="mb-0">About</h5>
                     <div className="p-4 rounded shadow-sm bg-light">
                         <p className="font-italic mb-0">{user.bio}</p>
-                        <p className="font-italic mb-0"> mon blog <a href={user.blog} target="_blank">{user.blog}</a></p>
+                        <p className="font-italic mb-0"> <FontAwesomeIcon icon={faLink} /><a href={user.blog} target="_blank">{user.blog}</a></p>
                     </div>
                 </div>
                 <div className="py-4 px-4">
@@ -53,7 +65,7 @@ const Profil = ({ user,github }) => (
                             <div className="col-lg-12 mb-2 pr-lg-1 repos" >
                                 <h5>{item.name}</h5>
                                 <h5>{item.description}</h5>
-                                <h5><i class="fas fa-code"/> {item.language}  <i className="fas fa-code"/>{item.stargazers_count} <i className="fas fa-code"/>{item.forks}</h5>
+                                <h5><FontAwesomeIcon icon={faCode} /> {item.language} <FontAwesomeIcon icon={faStar} /> {item.stargazers_count} <FontAwesomeIcon icon={faCodeBranch} /> {item.forks}</h5>
 
                             </div>
                             </a>

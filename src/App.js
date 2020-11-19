@@ -12,6 +12,7 @@ class App extends React.Component {
             isLoading: false,
             user: false,
             github: false,
+            isOwned:false
         };
         this.handleSubmit = this.handleSubmit.bind(this)
     }
@@ -21,7 +22,11 @@ class App extends React.Component {
 
         const data = new FormData(e.target)
         const username = data.get('username')
-        console.log(username,data)
+        const isOwned = data.get('isOwned')
+        this.setState({
+            isOwned: isOwned
+        })
+        console.log(username,data,isOwned)
         this.fetchUser(username)
         this.fetchUserRepos(username)
     }
@@ -76,7 +81,8 @@ class App extends React.Component {
                 { !isLoading && !github.message && github && user &&
                 <Profil
                     user= {user}
-                       github={github}
+                    github={github}
+
                 />
                 }
                 { !isLoading && github.message &&
