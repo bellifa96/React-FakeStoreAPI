@@ -1,98 +1,160 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
-import FormUser from './form.js';
-import Profil from "./profil";
-
+import Navbar from "./composants/NavBar";
+import Filter from "./composants/Filter";
+import Products from "./composants/Products";
+import {forEach} from "react-bootstrap/ElementChildren";
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
-            isLoading: false,
-            user: false,
-            github: false,
-            isOwned:false
+            isLoaded: false,
+            items :null,
+            filters: [],
+            filteredItems:[],
+            max:1000,
+            min:0,
+            isFilter: false
         };
-        this.handleSubmit = this.handleSubmit.bind(this)
+
+
+
+        let load = this.fetchAllProducts();
+        this.handleChange = this.handleChange.bind(this);
     }
 
-    handleSubmit(e) {
-        e.preventDefault()
 
-        const data = new FormData(e.target)
-        const username = data.get('username')
-        const isOwned = data.get('isOwned')
+
+    handleChange(e) {
+        let category = e.target.name ;
+        console.log('checked = '+e.target.checked)
+        if(e.target.checked){
+            this.addFilter(category)
+
+            this.setNewProducts()
+
+
+        }else{
+            this.deleteFilter(category)
+            console.log('dddd'+this.state.filters.length);
+
+            if(!this.state.filters.length){
+                console.log('oooo'+this.state.filters.length);
+              //  this.resetItems()
+                this.isNotFilter()
+                this.fetchAllProducts()
+            }else{
+                console.log('delete')
+                this.resetItems()
+                console.log(this.state.filters)
+
+                for (let i = 0;i < this.state.filters.length;i++) {
+                    this.fetchProductsByCategory(this.state.filters[i])
+                    this.setNewProducts()
+                }
+            }
+        }
+
+           //  let array = this.state.filteredItems;
+
+    }
+
+    async resetItems(){
         this.setState({
-            isOwned: isOwned
-        })
-        console.log(username,data,isOwned)
-        this.fetchUser(username)
-        this.fetchUserRepos(username)
+            items: null,
+            filteredItems:[],
+        });
     }
-    async fetchUser(username) {
-        fetch("https://api.github.com/users/"+username)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        isLoaded: true,
-                        user: result
-                    });console.log(result)
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            )
+    async isNotFilter(){
+        this.setState({
+            isFilter:false
+        });
     }
-    async fetchUserRepos(username) {
-        fetch("https://api.github.com/users/"+username+"/repos")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        isLoaded: true,
-                        github: result
-                    });console.log(result)
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error
-                    });
-                }
-            )
+    async setNewProducts(){
+        this.setState({
+            items: this.state.filteredItems,
+        });
     }
 
-    render() {
-        const { isLoading, user, github } = this.state
+    async addFilter(category){
+        this.setState({
+            filters : this.state.filters.concat(category),
+        },() => { this.fetchProductsByCategory(category)});
+    }
+    async deleteFilter(category){
+        this.setState({
+            filters : this.state.filters.splice(category, 1),
+        });console.log('filter'+this.state.filters)
+    }
+
+
+    async fetchAllProducts() {
+
+        fetch("https://fakestoreapi.com/products")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        items: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            )
+    }
+    async fetchProductsByCategory(category) {
+          fetch("https://fakestoreapi.com/products/category/" + category)
+              .then(res => res.json())
+              .then(
+                  (result) => {
+                      this.setState({
+                          isLoaded: true,
+                          items : result,
+                          filteredItems : [...this.state.filteredItems,...result],
+                          isFilter: true
+                      });
+                  },
+                  (error) => {
+                      this.setState({
+                          isLoaded: true,
+                          error
+                      });
+                  }
+              )
+
+    }
+
+
+    render(){
+        const {filteredItems,isFilter, isLoaded,items, min, max } = this.state
         return (
             <div>
-                {!github &&
-                < FormUser
-                    handleSubmit={this.handleSubmit}
-                    notfound = {false}
+                <Navbar/>
+                <div className="row" id='body'>
+                    <Filter
+                     handleChange = {this.handleChange}
                     />
-                }
-                { isLoading && <p>Fetching github ...</p> }
-                { !isLoading && !github.message && github && user &&
-                <Profil
-                    user= {user}
-                    github={github}
-
-                />
-                }
-                { !isLoading && github.message &&
-                < FormUser
-                    handleSubmit={this.handleSubmit}
-                    notfound = {true}
-
+                    {isLoaded && !isFilter &&
+                    <Products
+                        products={items}
                     />
-                }
+                    }
+                    {isLoaded && isFilter &&
+                        <Products
+                        products={filteredItems}
+                        min={min}
+                        max={max}
+                        />
+                    }
+                </div>
             </div>
+
             /*
             <div>
                 <formUser handleSubmit={this.handleSubmit()}/>
