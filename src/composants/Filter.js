@@ -6,11 +6,11 @@ import {Nav} from "react-bootstrap";
 import {NavDropdown} from "react-bootstrap";
 import {faShoppingCart} from "@fortawesome/free-solid-svg-icons";
 
-const Filter = ({handleChange,nbItem})=>{
+const Filter = ({handleSearchChange,handleChange,nbItem})=>{
     return(
       <div class="col-md-4">
           <div className="md-form mt-0">
-              <input className="form-control" type="text" placeholder="Search" aria-label="Search"/>
+              <input className="form-control" type="text" name="search" onChange={handleSearchChange} placeholder="Search" aria-label="Search"/>
           </div>
           <div>
               <input type="checkbox" id="men" name="men clothing" onChange={handleChange}/>

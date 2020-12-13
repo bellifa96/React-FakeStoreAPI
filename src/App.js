@@ -10,22 +10,29 @@ class App extends React.Component {
         super(props);
         this.state = {
             isLoaded: false,
-            items :null,
+            items :[],
             filters: [],
             filteredItems:[],
             max:1000,
             min:0,
-            isFilter: false
+            isFilter: false,
+            search :"",
         };
 
 
 
         let load = this.fetchAllProducts();
         this.handleChange = this.handleChange.bind(this);
+        this.handleSearchChange = this.handleSearchChange.bind(this)
+
     }
 
 
-
+    handleSearchChange(e){
+            this.setState(
+                { search: e.target.value }
+                );
+    }
     handleChange(e) {
         let category = e.target.name ;
         console.log('checked = '+e.target.checked)
@@ -132,22 +139,36 @@ class App extends React.Component {
 
 
     render(){
-        const {filteredItems,isFilter, isLoaded,items, min, max } = this.state
+        const {filteredItems,isFilter, isLoaded,items, min, max,search } = this.state
+        const lowercasedFilter = search.toLowerCase();
+        const filteredData = items.filter(item => {
+            return Object.keys(item).some(key =>
+
+                typeof item[key] === "string" && item[key].toLowerCase().includes(lowercasedFilter)
+            );
+        });
+       const filterData = filteredItems.filter(item => {
+            return Object.keys(item).some(key =>
+                typeof item[key] === "string" &&  item[key].toLowerCase().includes(lowercasedFilter)
+            );
+        });
         return (
             <div>
                 <Navbar/>
                 <div className="row" id='body'>
                     <Filter
                      handleChange = {this.handleChange}
+                     handleSearchChange = {this.handleSearchChange }
                     />
                     {isLoaded && !isFilter &&
                     <Products
-                        products={items}
+                        products={filteredData}
                     />
                     }
+
                     {isLoaded && isFilter &&
                         <Products
-                        products={filteredItems}
+                        products={filterData}
                         min={min}
                         max={max}
                         />
